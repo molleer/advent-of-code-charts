@@ -23,4 +23,4 @@ app.get("/api/board", async (req, res) => {
 
 app.use("/it", express.static("static"));
 app.use("/hiq", express.static("static"));
-app.listen(8080);
+app.listen(Number(process.env.PORT));
