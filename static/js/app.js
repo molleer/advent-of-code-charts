@@ -635,27 +635,31 @@
     return b.local_score - a.local_score;
   }
 
-  function getCacheKey() {
-    return `aoc-data-v1-${document.location.pathname}`;
+  function getCacheKey(name) {
+    return `aoc-data-v1-${name}`;
   }
 
-  function getCache() {
-    console.info("Getting cache", getCacheKey());
-    return JSON.parse(localStorage.getItem(getCacheKey()) || "null");
+  function getCache(name) {
+    console.info("Getting cache", getCacheKey(name));
+    return JSON.parse(localStorage.getItem(getCacheKey(name)) || "null");
   }
 
-  function updateCache(data) {
+  function updateCache(name, data) {
     console.log("Updating cache");
     localStorage.setItem(
-      getCacheKey(),
+      getCacheKey(name),
       JSON.stringify({ data: data, timestamp: Date.now() })
     );
     return data;
   }
 
   function clearCache() {
-    console.log("Clearing cache", getCacheKey());
-    localStorage.setItem(getCacheKey(), "");
+    const keys = Object.keys(localStorage);
+    for (const key of keys) {
+      if (key.startsWith("aoc-data-v1-")) {
+        localStorage.removeItem(key);
+      }
+    }
   }
 
   function toggleShowAll() {
@@ -779,12 +783,30 @@
    * @returns {Promise<IAppData>}
    */
   function getLeaderboardJson() {
-    const cache = getCache();
+    let group_id = "";
+    const group_name = location.href
+      .replace(location.origin, "")
+      .replace(/\//g, "")
+      .toLowerCase();
+
+    console.log(group_name);
+    if (group_name == "it") {
+      group_id = "75959";
+    } else if (group_name == "hiq") {
+      group_id = "480643";
+    } else {
+      console.log("Unknown group!");
+      return new Promise((_, fail) => {
+        fail("Unknown group!");
+      });
+    }
+
+    const cache = getCache(group_name);
 
     console.info("Found cache", cache);
 
     if (cache) {
-      const ttl = new Date(cache.timestamp + 5 * 60 * 1000);
+      const ttl = new Date(cache.timestamp + 900 * 1000);
       console.info("Found cached value valid until", ttl);
 
       if (Date.now() < ttl.getTime()) {
@@ -796,11 +818,11 @@
       }
     }
 
-    return fetch("/api/board?year=2024&group_id=some_id", {
+    return fetch(`/api/board?year=2024&group_id=${group_id}`, {
       credentials: "same-origin",
     })
       .then((data) => data.json())
-      .then((json) => updateCache(json))
+      .then((json) => updateCache(group_name, json))
       .then((json) => transformRawAocJson(json));
   }
 

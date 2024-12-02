@@ -21,5 +21,6 @@ app.get("/api/board", async (req, res) => {
   }
 });
 
-app.use("/", proxy("http://localhost:3000"));
+app.use("/it", express.static("static"));
+app.use("/hiq", express.static("static"));
 app.listen(8080);
