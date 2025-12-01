@@ -818,7 +818,7 @@
       }
     }
 
-    return fetch(`/api/board?year=2024&group_id=${group_id}`, {
+    return fetch(`/api/board?year=2025&group_id=${group_id}`, {
       credentials: "same-origin",
     })
       .then((data) => data.json())
