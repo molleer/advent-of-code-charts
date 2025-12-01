@@ -5,6 +5,9 @@
  * @property {import('moment')} moment
  */
 
+const YEAR = 2025;
+const N_DAYS = 12;
+
 (function (/** @type {any} */ aoc) {
   // Unsure how to add JSDoc types so for now like this.
   // See also: https://stackoverflow.com/q/77466760/419956
@@ -472,7 +475,7 @@
     ]);
 
     const maxDeltaPoints = members.filter((m) => m.deltas.length > 0).length;
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= N_DAYS; i++) {
       let availableDeltaPoints = maxDeltaPoints;
       const sortedDeltas = deltas
         .filter((d) => d.dayNr === i)
@@ -485,7 +488,7 @@
 
     let availablePoints = {};
 
-    for (let i = 1; i <= 25; i++) {
+    for (let i = 1; i <= N_DAYS; i++) {
       availablePoints[i] = {};
       for (let j = 1; j <= 2; j++) {
         availablePoints[i][j] = n_members;
@@ -818,7 +821,7 @@
       }
     }
 
-    return fetch(`/api/board?year=2025&group_id=${group_id}`, {
+    return fetch(`/api/board?year=${YEAR}&group_id=${group_id}`, {
       credentials: "same-origin",
     })
       .then((data) => data.json())
@@ -941,7 +944,7 @@
     withXTickingScale() {
       let x = this.scales.x;
       x.min = 0;
-      x.max = 25;
+      x.max = N_DAYS;
       x.ticks = {
         color: aocColors["main"],
         stepSize: 1,
@@ -1720,7 +1723,7 @@
       let grid = data.members;
 
       let tr = gridElement.appendChild(document.createElement("tr"));
-      for (let d = 0; d <= 25; d++) {
+      for (let d = 0; d <= N_DAYS; d++) {
         let td = tr.appendChild(document.createElement("td"));
         td.innerText = d === 0 ? "" : d.toString();
         td.align = "center";
@@ -1750,7 +1753,7 @@
         td.style.border = "1px solid #333";
         td.style.padding = "2px 8px";
 
-        for (let d = 1; d <= 25; d++) {
+        for (let d = 1; d <= N_DAYS; d++) {
           let td = tr.appendChild(document.createElement("td"));
           td.style.backgroundColor = cellColor;
           td.style.border = "1px solid #333";
@@ -1957,7 +1960,7 @@
             : idx >= 3,
         };
 
-        for (let i = 1; i <= 25; i++) {
+        for (let i = 1; i <= N_DAYS; i++) {
           let star1 = data.stars.find(
             (s) =>
               s.memberId === member.id && s.dayNr === i && s.starKey === "1"
@@ -1997,7 +2000,7 @@
       let chart = new Chart(element.getContext("2d"), {
         type: "bar",
         data: {
-          labels: range(1, 26),
+          labels: range(1, N_DAYS + 1),
           datasets: datasets,
         },
         options,
@@ -2208,7 +2211,7 @@
               },
             },
           })
-          .withXTimeScale(data, { xMax: 25 })
+          .withXTimeScale(data, { xMax: N_DAYS })
           .withYScale({
             ticks: {
               min: 0,
